@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function()
+        {
+            $("#register_form").on("submit", function (e) {
+                e.preventDefault();
+
+                if ($("#register_password").val() != $("#register_confirm_password").val())
+                {
+                    $("#register_response").text("Passwords don't match");
+                }
+                else
+                {
+                    $.ajax({
+                        url: "./user.php",
+                        type: "POST",
+                        data: {
+                            action: "register",
+                            username: $("#username").val(),
+                            password: $("#password").val()
+                        },
+                        success: function (response) {
+                            if (response.success == true)
+                            {
+                                $("#response").text("Successfully created account");
+                                setTimeout(function(){
+                                    window.location.href = "index.html";
+                                }, 3000);
+                            }
+                            else
+                            {
+                                $("#response").text(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("An error occurred: " + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <div><a href="index.html">Return to home</a></div>
+    <form id="register_form" class="form">
+        <h1>Register</h1>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="confirm_password">Confirm password:</label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+        <button type="submit">Create account</button>
+        <div id="response" style="padding:20px;font-size:20px;"></div>
+    </form>
+
+</body>
+</html>

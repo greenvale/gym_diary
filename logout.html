@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function()
+        {
+            $.ajax({
+                url: "./user.php",
+                type: "POST",
+                data: {
+                    action: "logout"
+                },
+                success: function (response) {
+                    $("#response").text(response.message);
+                    setTimeout(function(){
+                        window.location.href = "index.html";
+                    }, 3000);
+                },
+                error: function (xhr, status, error) {
+                    console.log("An error occurred: " + xhr.responseText);
+                }
+            });
+        });
+
+    </script>
+
+    <div><a href="index.html">Return to home</a></div>
+    <h2 style="text-align:center;" id="response"></h2>
+
+</body>
+</html>

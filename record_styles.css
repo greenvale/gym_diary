@@ -1,0 +1,38 @@
+#ex-container
+{
+    padding:20px;
+    margin-left:10%;
+    margin-right:10%;
+}
+
+
+#ex-container table
+{
+    width:70%;
+    border-spacing:10px;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+#ex-container th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+#ex-container th {
+    background-color: #e9e9e9;
+}
+
+#ex-container .ex-card
+{
+    margin:30px;
+    padding:20px;
+    border-radius:10px;
+    background-color:#f3f3f3;
+}
+
+#ex-container .hidden
+{
+    display:none;
+}

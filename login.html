@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function()
+        {
+            $.ajax({
+                url: "./user.php",
+                type: "POST",
+                data: {
+                    action: "check_logged_in"
+                },
+                success: function (response) {
+                    if (response.logged_in == true)
+                    {
+                        console.log("id: " + response.user_id + ", username: " + response.username);
+                        $("#logged_in").show();
+                    }
+                    else
+                    {
+                        console.log("Not logged in");
+                        $("#logged_out").show();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("An error occurred: " + xhr.responseText);
+                }
+            });
+        });
+
+        $(document).ready(function()
+        {
+            $("#login_form").on("submit", function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "./user.php",
+                    type: "POST",
+                    data: {
+                        action: "login",
+                        username: $("#login_username").val(),
+                        password: $("#login_password").val()
+                    },
+                    success: function (response) {
+                        //$("#login_response").text(response.message);
+                        setTimeout(function(){
+                            window.location.href = "index.html";
+                        }, 100);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("An error occurred: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <div><a href="index.html">Return to home</a></div>
+    <div id="logged_in" style="display:none;">
+        <h2 style="text-align:center;">Already logged in</h2>
+    </div>
+    <div id="logged_out" style="display:none;">
+        <form id="login_form" class="form">
+            <h1>Login</h1>
+            <label for="login_username">Username:</label>
+            <input type="text" id="login_username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="login_password" name="password" required>
+            <button type="submit">Login</button>
+            <div id="login_response" style="padding:20px;font-size:20px;"></div>
+            <div>Haven't got an account? <a href="register.html">Create one here</a></div>
+        </form>
+    </div>
+
+</body>
+</html>
