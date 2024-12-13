@@ -11,37 +11,6 @@ function formatDate(date)
 
 $("#ex-date-selector .current-date").text(formatDate(current_date));
 
-global_exercise_data = {
-    10:{
-        "ex_name":"Chest press", 
-        "ex_type":"weight",
-        "date":"2024-10-20",
-        "ex_data": {
-            "sets":{
-                1:{"reps":10, "weight":30}, 
-                2:{"reps":8, "weight":30}
-            }, 
-            "config":"cable", 
-            "details":"pos 16"
-        }
-    },
-    11:{
-        "ex_name":"Leg press", 
-        "ex_type":"weight",
-        "date":"2024-10-20",
-        "ex_data": {
-            "sets":{
-                1:{"reps":8, "weight":120}, 
-                2:{"reps":6, "weight":120}, 
-                3:{"reps":9, "weight":110}
-            }, 
-            "config":"machine", 
-            "details":"seat pos 4"
-        }
-    }
-};
-next_id = 12;
-
 /*
 $.ajax({
     url: './record.php',
@@ -102,17 +71,7 @@ class ExerciseBoard
     {
         this.exercise_cards = {};
 
-        /*
-        $.each(global_exercise_data, (i,v) => {
-            let exercise_card = new ExerciseCard(i, this, v["ex_type"], v["ex_name"], v["ex_data"]);
-            $("#ex-container").append($(`<div id="ex-${exercise_card.id}" class="ex-card"></div>`));
-            this.exercise_cards[i] = (exercise_card);
-            this.exercise_cards[i].render();
-        });
-        */
-
         this.init();
-
     }
 
     async init() {
@@ -121,11 +80,10 @@ class ExerciseBoard
             console.log('Data received:', data);
 
             $.each(data["result"], (i,row) => {
-                let ex_data = JSON.parse(row["ex_data"]);
-                let exercise_card = new ExerciseCard(row["id"], this, row["ex_type"], row["ex_name"], ex_data);
+                let exercise_card = new ExerciseCard(row["id"], this, row["ex_type"], row["ex_name"], JSON.parse(row["ex_data"]));
                 $("#ex-container").append($(`<div id="ex-${exercise_card.id}" class="ex-card"></div>`));
-                this.exercise_cards[i] = (exercise_card);
-                this.exercise_cards[i].render();
+                this.exercise_cards[row["id"]] = exercise_card;
+                this.exercise_cards[row["id"]].render();
             });
 
         } catch (error) {
@@ -155,33 +113,27 @@ class ExerciseBoard
 
     delete_exercise(exercise_card)
     {
-        console.log(`Request to delete exercise ${exercise_card.id}`)
-        if (global_exercise_data.hasOwnProperty(exercise_card.id))
-        {
-            delete global_exercise_data[exercise_card.id];
-            $(`#ex-${exercise_card.id}`).remove();
-        }
-        else
-        {
-            console.log(`Could not find exercise with id ${exercise_card.id}`);
-        }
+        $.ajax({
+            url: './record.php',
+            method: 'POST',
+            dataType: 'json',
+            data:{
+                action:"delete_exercise",
+                ex_id:exercise_card.id
+            },
+            success: (response) => {
+                console.log(response);
+                $(`#ex-${exercise_card.id}`).remove();
+                delete this.exercise_cards[exercise_card.id];
+            },
+            error: function(error) {
+                console.log(error["responseText"]);
+            }
+        });
     }
 
     save_exercise(exercise_card)
     {
-        /*
-        if (global_exercise_data.hasOwnProperty(exercise_card.id))
-        {
-            global_exercise_data[exercise_card.id]["ex_name"] = exercise_card.name;
-            global_exercise_data[exercise_card.id]["ex_type"] = exercise_card.type;
-            global_exercise_data[exercise_card.id]["ex_data"] = exercise_card.data;    
-        }
-        else
-        {
-            console.log(`Could not find exercise with id ${exercise_card.id}`);
-        }
-        */
-       
         $.ajax({
             url: './record.php',
             method: 'POST',
@@ -205,23 +157,32 @@ class ExerciseBoard
 
     new_exercise()
     {
-        let id = next_id;
-        console.log(`Creating new exercise with id ${id}`);
-        next_id += 1;
-        
-        // creates a new blank exercise element
-        global_exercise_data[id] = {"ex_name":"", "ex_type":"", "ex_data":{"sets":{}, "config":"", "details":""}};
-        
-        // create an exercise card with this board as its container board
-        let exercise_card = new ExerciseCard(id, this, global_exercise_data[id]["ex_type"], 
-            global_exercise_data[id]["ex_name"], global_exercise_data[id]["ex_data"]);
-        
-        this.exercise_cards[id] = exercise_card;
-        this.exercise_cards[id].editting = true;
-
-        // create html element and render card into html element
-        $("#ex-container").append($(`<div id="ex-${id}" class="ex-card"></div>`));
-        this.exercise_cards[id].render();
+        let init_name = "";
+        let init_type = "";
+        $.ajax({
+            url: './record.php',
+            method: 'POST',
+            dataType: 'json',
+            data:{
+                action:"create_exercise",
+                date:formatDate(current_date),
+                ex_name:init_name,
+                ex_type:init_type,
+                ex_data:{"sets":{}, "config":"", "details":""}
+            },
+            success: (response) => {
+                console.log(response);
+                let exercise_card = new ExerciseCard(response["ex_id"], this, init_type, init_name,
+                    {"sets":{}, "config":"", "details":""});
+                this.exercise_cards[response["ex_id"]] = exercise_card;
+                this.exercise_cards[response["ex_id"]].editting = true;
+                $("#ex-container").append($(`<div id="ex-${response["ex_id"]}" class="ex-card"></div>`));
+                this.exercise_cards[response["ex_id"]].render();
+            },
+            error: function(error) {
+                console.log(error["responseText"]);
+            }
+        });
     }
 }
 
@@ -293,7 +254,7 @@ class ExerciseCard
             $(`#ex-${this.id} button.new-set`).click(() => {
                 let init_weight = 0;
                 let init_reps = 0;
-                let set_id = Math.max(...$.map(Object.keys(this.data["sets"]), Number)) + 1;
+                let set_id = Object.keys(this.data["sets"]).length == 0 ? 1 : Math.max(...$.map(Object.keys(this.data["sets"]), Number)) + 1;
                 console.log(`New set idx: ${set_id}`);
                 this.data["sets"][set_id] = {"weight":init_weight, "reps":init_reps};
                 let set_row = create_editting_set_row(this, set_id, init_weight, init_reps);
@@ -371,7 +332,7 @@ $(document).ready(function(){
     let exercise_board = new ExerciseBoard();
 
     $("#print-data").click(() => { 
-        console.log(global_exercise_data);
+        console.log(exercise_board.exercise_cards);
     });
     
     $("#new-ex").click(() => {

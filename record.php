@@ -32,21 +32,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         echo json_encode(["success" => True, "result" => $rows]);
         http_response_code(200);
     }
-    elseif ($action == "create_exercise" && isset($_POST["date"]) && isset($_POST["ex_name"])
+    elseif ($action == "create_exercise" && isset($_SESSION["user_id"]) && isset($_POST["date"]) && isset($_POST["ex_name"])
         && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
     {
         $stmt = $pdo->prepare("INSERT INTO exercise (user_id, date, ex_type, ex_name, ex_data) VALUES (?,?,?,?,?)");
         $stmt->execute([$_SESSION["user_id"], $_POST["date"], $_POST["ex_type"], $_POST["ex_name"], json_encode($_POST["ex_data"])]);
+        $ex_id = $pdo->lastInsertId();
+        echo json_encode(["success" => True, "ex_id" => $ex_id]);
+        http_response_code(200);
+    }
+    elseif ($action == "edit_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]) && isset($_POST["ex_name"]) 
+        && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
+    {
+        $stmt = $pdo->prepare("UPDATE exercise SET ex_name = ?, ex_type = ?, ex_data = ? WHERE user_id = ? AND id = ?");
+        $stmt->execute([$_POST["ex_name"], $_POST["ex_type"], json_encode($_POST["ex_data"]),  $_SESSION["user_id"], $_POST["ex_id"]]);
 
         echo json_encode(["success" => True]);
         http_response_code(200);
     }
-    
-    elseif ($action == "edit_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]) && isset($_POST["ex_name"]) 
-        && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
+    elseif ($action == "delete_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]))
     {
-        $stmt = $pdo->prepare("UPDATE exercise SET ex_name = ?, ex_type = ?, ex_data = ? WHERE id = ? AND user_id = ?");
-        $stmt->execute([$_POST["ex_name"], $_POST["ex_type"], json_encode($_POST["ex_data"]), $_POST["ex_id"], $_SESSION["user_id"]]);
+        $stmt = $pdo->prepare("DELETE FROM exercise WHERE user_id = ? AND id = ?");
+        $stmt->execute([$_SESSION["user_id"], $_POST["ex_id"]]);
 
         echo json_encode(["success" => True]);
         http_response_code(200);
