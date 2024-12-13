@@ -20,18 +20,19 @@
     </div>
 
     <div id="content">
-    
-        <button id="new-ex">New exercise</button>
-        <button id="print-data">Print data</button>
-
-        <div id="ex-container">
-
+        <div id="ex-date-selector">
+            <button class="arrow-button left-arrow">&#8592;</button>
+            <div class="current-date"></div>
+            <button class="arrow-button right-arrow">&#8594;</button>
+            <!--<input type="date" value="2024-10-20"></input>-->
         </div>
-
+        <div id="ex-container"></div>
+        <div id="ex-controls-container">
+            <button id="new-ex" class="large">New exercise</button>
+            <button id="print-data" class="large">Print data</button>
+        </div>
     </div>
 
-
-    
     <script src="record.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $.ajax({
-        url: "./backend.php",
+        url: "./user.php",
         type: "POST",
         data: {
             action: "check_logged_in"

@@ -1,3 +1,36 @@
+
+#ex-date-selector
+{
+    display:flex;
+    align-items: center;
+    justify-content:center;
+    margin-top:20px;
+}
+
+#ex-date-selector .current-date
+{
+    padding:10px;
+    background-color:#eeeeee;
+    border-radius:10px;
+    border:none;
+    margin:10px;
+    font-size:18px;
+}
+
+#ex-date-selector .arrow-button
+{
+    padding:5px;
+    margin:10px;
+    font-size:20px;
+}
+
+#ex-controls-container
+{
+    padding:20px;
+    margin-left:10%;
+    margin-right:10%;
+}
+
 #ex-container
 {
     padding:20px;
@@ -32,7 +65,62 @@
     background-color:#f3f3f3;
 }
 
-#ex-container .hidden
+#ex-container input
 {
-    display:none;
+    border:none;
+    padding:3px;
+    font-size: 14px;
+}
+
+table.no-border td
+{
+    border:none;
+}
+
+button
+{
+    margin:3px;
+    color: white;
+    border: none;
+    background-color: #555555;
+    border-radius: 5px;
+    padding:3px 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #444444;
+}
+
+button.green
+{
+    background-color: #4CAF50;
+}
+
+button.green:hover
+{
+    background-color: #45a049;
+}
+
+button.red
+{
+    background-color: #c90303;
+}
+
+button.red:hover
+{
+    background-color: #a70000;
+}
+
+button.large
+{
+    padding:10px 20px;
+    margin:10px;
+}
+
+td.no-border
+{
+    border:none
 }
