@@ -15,6 +15,17 @@
     border:none;
     margin:10px;
     font-size:18px;
+    text-align: center;
+}
+
+#ex-date-selector .current-date .day
+{
+    padding:6px;
+}
+
+#ex-date-selector .current-date .date
+{
+    padding:6px;
 }
 
 #ex-date-selector .arrow-button
@@ -27,15 +38,15 @@
 #ex-controls-container
 {
     padding:20px;
-    margin-left:10%;
-    margin-right:10%;
+    margin-left:15%;
+    margin-right:15%;
 }
 
 #ex-container
 {
     padding:20px;
-    margin-left:10%;
-    margin-right:10%;
+    margin-left:15%;
+    margin-right:15%;
 }
 
 

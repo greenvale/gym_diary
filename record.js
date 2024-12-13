@@ -1,48 +1,24 @@
+let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-let current_date = new Date("2024-10-20");
-
-function formatDate(date)
+function formatDate(date, style="")
 {
     let year = date.getFullYear();
     let month = ("0" + (date.getMonth() + 1)).slice(-2);
     let day = ("0" + date.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
+
+    if (style == "" || style == "US")
+    {
+        return `${year}-${month}-${day}`;
+    }
+    else if (style == "UK")
+    {
+        return `${day}/${month}/${year}`;
+    }
 }
 
-$("#ex-date-selector .current-date").text(formatDate(current_date));
 
-/*
-$.ajax({
-    url: './record.php',
-    method: 'POST',
-    dataType: 'json',
-    data:{
-        action: "create_exercise",
-        ex_type: global_exercise_data[11]["ex_type"],
-        ex_name: global_exercise_data[11]["ex_name"],
-        date: global_exercise_data[11]["date"],
-        ex_data: global_exercise_data[11]["ex_data"]
-    },
-    success: function(response) {
-        console.log(response); 
-    },
-    error: function(error) {
-        console.log(`Error: ${error["responseText"]}`);
-    }
-});
-*/
-
-$("#ex-date-selector .left-arrow").click(() => {
-    current_date.setDate(current_date.getDate() - 1);
-    $("#ex-date-selector .current-date").text(formatDate(current_date));
-});
-
-$("#ex-date-selector .right-arrow").click(() => {
-    current_date.setDate(current_date.getDate() + 1);
-    $("#ex-date-selector .current-date").text(formatDate(current_date));
-});
-
-
+// creates a table row element for the weight training set table in editting form
+// this function avoids code duplication
 function create_editting_set_row(exercise_card, set_id, weight, reps)
 {
     let set_row = $(`
@@ -67,18 +43,22 @@ function create_editting_set_row(exercise_card, set_id, weight, reps)
 
 class ExerciseBoard
 {
-    constructor()
+    constructor(current_date)
     {
+        this.current_date = current_date;
         this.exercise_cards = {};
-
         this.init();
     }
 
     async init() {
         try {
             let data = await this.fetch_data();
-            console.log('Data received:', data);
+            console.log('Initial data received:', data);
 
+            // empty the exercise container of its contents
+            $("#ex-container").empty();
+
+            // create exercise cards for the existing data for this date and user
             $.each(data["result"], (i,row) => {
                 let exercise_card = new ExerciseCard(row["id"], this, row["ex_type"], row["ex_name"], JSON.parse(row["ex_data"]));
                 $("#ex-container").append($(`<div id="ex-${exercise_card.id}" class="ex-card"></div>`));
@@ -99,7 +79,7 @@ class ExerciseBoard
                 dataType: 'json',
                 data:{
                     action:"get_exercise_by_date",
-                    date:formatDate(current_date)
+                    date:formatDate(this.current_date)
                 },
                 success: function(response) {
                     resolve(response);
@@ -165,10 +145,10 @@ class ExerciseBoard
             dataType: 'json',
             data:{
                 action:"create_exercise",
-                date:formatDate(current_date),
+                date:formatDate(this.current_date),
                 ex_name:init_name,
                 ex_type:init_type,
-                ex_data:{"sets":{}, "config":"", "details":""}
+                ex_data:JSON.stringify({"sets":{}, "config":"", "details":""})
             },
             success: (response) => {
                 console.log(response);
@@ -201,7 +181,6 @@ class ExerciseCard
 
     render()
     {
-        let set_rows = [];
         if (this.editting)
         // EDITTING
         {
@@ -329,7 +308,12 @@ class ExerciseCard
 
 $(document).ready(function(){
 
-    let exercise_board = new ExerciseBoard();
+    let current_date = new Date();
+
+    $("#ex-date-selector .current-date .day").text(days[current_date.getDay()]);
+    $("#ex-date-selector .current-date .date").text(formatDate(current_date, "UK"));
+    
+    let exercise_board = new ExerciseBoard(current_date);
 
     $("#print-data").click(() => { 
         console.log(exercise_board.exercise_cards);
@@ -338,4 +322,19 @@ $(document).ready(function(){
     $("#new-ex").click(() => {
         exercise_board.new_exercise();
     });
+
+    $("#ex-date-selector .left-arrow").click(() => {
+        current_date.setDate(current_date.getDate() - 1);
+        $("#ex-date-selector .current-date .day").text(days[current_date.getDay()]);
+        $("#ex-date-selector .current-date .date").text(formatDate(current_date, "UK"));
+        exercise_board = new ExerciseBoard(current_date);
+    });
+    
+    $("#ex-date-selector .right-arrow").click(() => {
+        current_date.setDate(current_date.getDate() + 1);
+        $("#ex-date-selector .current-date .day").text(days[current_date.getDay()]);
+        $("#ex-date-selector .current-date .date").text(formatDate(current_date, "UK"));
+        exercise_board = new ExerciseBoard(current_date);
+    });
+    
 });

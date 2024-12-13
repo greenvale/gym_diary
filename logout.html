@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+
         $(document).ready(function()
         {
             $.ajax({
@@ -22,7 +23,7 @@
                     $("#response").text(response.message);
                     setTimeout(function(){
                         window.location.href = "index.html";
-                    }, 3000);
+                    }, 2000);
                 },
                 error: function (xhr, status, error) {
                     console.log("An error occurred: " + xhr.responseText);

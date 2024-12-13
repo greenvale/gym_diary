@@ -34,10 +34,7 @@
                     console.log("An error occurred: " + xhr.responseText);
                 }
             });
-        });
 
-        $(document).ready(function()
-        {
             $("#login_form").on("submit", function (e) {
                 e.preventDefault();
 
@@ -75,7 +72,7 @@
             <label for="password">Password:</label>
             <input type="password" id="login_password" name="password" required>
             <button type="submit">Login</button>
-            <div id="login_response" style="padding:20px;font-size:20px;"></div>
+            <div id="login_response" style="padding:20px;font-size:20px;color:red;"></div>
             <div>Haven't got an account? <a href="register.html">Create one here</a></div>
         </form>
     </div>
