@@ -9,11 +9,13 @@ CREATE TABLE users(
 );
 
 CREATE TABLE exercise(
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    ex_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(50) NOT NULL,
     ex_name VARCHAR(200),
     ex_type VARCHAR(200),
-    date DATE,
+    ex_date DATE,
     ex_data JSON,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE exercise CHANGE COLUMN id ex_id INT AUTO_INCREMENT PRIMARY KEY;

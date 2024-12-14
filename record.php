@@ -10,10 +10,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 session_start();
 
-$host = "localhost";
-$db = "test";
-$db_user = "root";
-$db_password = "";
+$config = include "db_config.php";
+
+$host = $config["host"];
+$db = $config["db"];
+$db_user = $config["db_user"];
+$db_password = $config["db_password"];
 
 $dsn = "mysql:host=".$host.";dbname=".$db.";charset=utf8";
 $pdo = new PDO($dsn, $db_user, $db_password);
@@ -23,10 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     $action = $_POST["action"];
 
-    if ($action == "get_exercise_by_date" && isset($_SESSION["user_id"]) && isset($_POST["date"]))
+    if ($action == "get_exercise_by_date" && isset($_SESSION["user_id"]) && isset($_POST["ex_date"]))
     {
-        $stmt = $pdo->prepare("SELECT * FROM exercise WHERE user_id = ? AND date = ?");
-        $stmt->execute([$_SESSION["user_id"], $_POST["date"]]);
+        $stmt = $pdo->prepare("SELECT * FROM exercise WHERE user_id = ? AND ex_date = ?");
+        $stmt->execute([$_SESSION["user_id"], $_POST["ex_date"]]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode(["success" => True, "result" => $rows]);
@@ -40,11 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
         echo json_encode(["success" => True, "result" => $rows]);
     }
-    elseif ($action == "create_exercise" && isset($_SESSION["user_id"]) && isset($_POST["date"]) && isset($_POST["ex_name"])
+    elseif ($action == "create_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_date"]) && isset($_POST["ex_name"])
         && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
     {
-        $stmt = $pdo->prepare("INSERT INTO exercise (user_id, date, ex_type, ex_name, ex_data) VALUES (?,?,?,?,?)");
-        $stmt->execute([$_SESSION["user_id"], $_POST["date"], $_POST["ex_type"], $_POST["ex_name"], $_POST["ex_data"]]);
+        $stmt = $pdo->prepare("INSERT INTO exercise (user_id, ex_date, ex_type, ex_name, ex_data) VALUES (?,?,?,?,?)");
+        $stmt->execute([$_SESSION["user_id"], $_POST["ex_date"], $_POST["ex_type"], $_POST["ex_name"], $_POST["ex_data"]]);
         
         $ex_id = $pdo->lastInsertId();
 
@@ -55,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     elseif ($action == "edit_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]) && isset($_POST["ex_name"]) 
         && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
     {
-        $stmt = $pdo->prepare("UPDATE exercise SET ex_name = ?, ex_type = ?, ex_data = ? WHERE user_id = ? AND id = ?");
+        $stmt = $pdo->prepare("UPDATE exercise SET ex_name = ?, ex_type = ?, ex_data = ? WHERE user_id = ? AND ex_id = ?");
         $stmt->execute([$_POST["ex_name"], $_POST["ex_type"], json_encode($_POST["ex_data"]),  $_SESSION["user_id"], $_POST["ex_id"]]);
 
         echo json_encode(["success" => True]);
@@ -63,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     elseif ($action == "delete_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]))
     {
-        $stmt = $pdo->prepare("DELETE FROM exercise WHERE user_id = ? AND id = ?");
+        $stmt = $pdo->prepare("DELETE FROM exercise WHERE user_id = ? AND ex_id = ?");
         $stmt->execute([$_SESSION["user_id"], $_POST["ex_id"]]);
 
         echo json_encode(["success" => True]);

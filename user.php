@@ -21,10 +21,12 @@ session_start();
 //$dotenv = Dotenv::createImmutable(__DIR__);
 //$dotenv->load();
 
-$host = "localhost";
-$db = "test";
-$db_user = "root";
-$db_password = "";
+$db_config = include "db_config.php";
+
+$host = $db_config["host"];
+$db = $db_config["db"];
+$db_user = $db_config["db_user"];
+$db_password = $db_config["db_password"];
 
 $dsn = "mysql:host=".$host.";dbname=".$db.";charset=utf8";
 $pdo = new PDO($dsn, $db_user, $db_password);

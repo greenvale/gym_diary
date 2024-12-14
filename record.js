@@ -1,12 +1,12 @@
 let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-function formatDate(date, style="")
+function formatDate(date, style="US")
 {
     let year = date.getFullYear();
     let month = ("0" + (date.getMonth() + 1)).slice(-2);
     let day = ("0" + date.getDate()).slice(-2);
 
-    if (style == "" || style == "US")
+    if (style == "US")
     {
         return `${year}-${month}-${day}`;
     }
@@ -60,10 +60,10 @@ class ExerciseBoard
 
             // create exercise cards for the existing data for this date and user
             $.each(data["result"], (i,row) => {
-                let exercise_card = new ExerciseCard(row["id"], this, row["ex_type"], row["ex_name"], JSON.parse(row["ex_data"]));
+                let exercise_card = new ExerciseCard(row["ex_id"], this, row["ex_type"], row["ex_name"], JSON.parse(row["ex_data"]));
                 $("#ex-container").append($(`<div id="ex-${exercise_card.id}" class="ex-card"></div>`));
-                this.exercise_cards[row["id"]] = exercise_card;
-                this.exercise_cards[row["id"]].render();
+                this.exercise_cards[row["ex_id"]] = exercise_card;
+                this.exercise_cards[row["ex_id"]].render();
             });
 
         } catch (error) {
@@ -79,7 +79,7 @@ class ExerciseBoard
                 dataType: 'json',
                 data:{
                     action:"get_exercise_by_date",
-                    date:formatDate(this.current_date)
+                    ex_date:formatDate(this.current_date)
                 },
                 success: function(response) {
                     resolve(response);
@@ -144,11 +144,11 @@ class ExerciseBoard
             method: 'POST',
             dataType: 'json',
             data:{
-                action:"create_exercise",
-                date:formatDate(this.current_date),
-                ex_name:init_name,
-                ex_type:init_type,
-                ex_data:JSON.stringify({"sets":{}, "config":"", "details":""})
+                action: "create_exercise",
+                ex_date: formatDate(this.current_date),
+                ex_name: init_name,
+                ex_type: init_type,
+                ex_data: JSON.stringify({"sets":{}, "config":"", "details":""})
             },
             success: (response) => {
                 console.log(response);
