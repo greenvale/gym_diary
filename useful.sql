@@ -10,7 +10,7 @@ CREATE TABLE users(
 
 CREATE TABLE exercise(
     ex_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(50) NOT NULL,
+    user_id INT,
     ex_name VARCHAR(200),
     ex_type VARCHAR(200),
     ex_date DATE,

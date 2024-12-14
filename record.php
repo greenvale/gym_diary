@@ -41,6 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode(["success" => True, "result" => $rows]);
+        http_response_code(200);
     }
     elseif ($action == "create_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_date"]) && isset($_POST["ex_name"])
         && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
@@ -51,14 +52,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $ex_id = $pdo->lastInsertId();
 
         // return the index for this new exercise
-        echo json_encode(["success" => True, "ex_id" => $ex_id, "ex_data" => json_decode($_POST["ex_data"])]);
+        echo json_encode(["success" => True, "ex_id" => $ex_id]);
         http_response_code(200);
     }
     elseif ($action == "edit_exercise" && isset($_SESSION["user_id"]) && isset($_POST["ex_id"]) && isset($_POST["ex_name"]) 
         && isset($_POST["ex_type"]) && isset($_POST["ex_data"]))
     {
         $stmt = $pdo->prepare("UPDATE exercise SET ex_name = ?, ex_type = ?, ex_data = ? WHERE user_id = ? AND ex_id = ?");
-        $stmt->execute([$_POST["ex_name"], $_POST["ex_type"], json_encode($_POST["ex_data"]),  $_SESSION["user_id"], $_POST["ex_id"]]);
+        $stmt->execute([$_POST["ex_name"], $_POST["ex_type"], $_POST["ex_data"],  $_SESSION["user_id"], $_POST["ex_id"]]);
 
         echo json_encode(["success" => True]);
         http_response_code(200);

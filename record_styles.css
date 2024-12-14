@@ -79,7 +79,7 @@
 #ex-container input
 {
     border:none;
-    padding:3px;
+    padding:7px;
     font-size: 14px;
 }
 
@@ -95,7 +95,7 @@ button
     border: none;
     background-color: #555555;
     border-radius: 5px;
-    padding:3px 5px;
+    padding:4px 6px;
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
@@ -127,11 +127,89 @@ button.red:hover
 
 button.large
 {
-    padding:10px 20px;
+    padding:6px 12px;
     margin:10px;
 }
 
 td.no-border
 {
     border:none
+}
+
+.set-table-container
+{
+    margin-top:20px;
+    padding:10px;
+}
+
+.label-input-pair
+{
+    display:flex;
+    align-items:center;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.label-input-pair label
+{
+    width:30%;
+    padding:7px;
+}
+
+.label-input-pair input
+{
+    width:50%;
+}
+
+/* Exercise card - edit mode */
+
+.ex-header-edit
+{
+    margin:10px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ex-header-edit .error-feedback
+{
+    color:#ff0000; 
+    display:inline; 
+    margin-left:auto;
+}
+
+/* Exercise card - view mode */
+
+.ex-header-view
+{
+    display: flex;
+    align-items:center;
+}
+
+.ex-header-view .ex-name
+{
+    margin-right:auto;
+    padding:10px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.ex-header-view .edit-button-container
+{
+    margin:10px;
+    text-align:right;
+}
+
+.ex-details-view
+{
+    padding:5px;
+}
+
+.ex-details-view .detail-elem
+{
+    display:inline; 
+    margin-left:5px; 
+    padding:6px; 
+    border-radius:5px; 
+    border:1px solid black;
 }
