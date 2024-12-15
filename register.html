@@ -87,10 +87,11 @@
                                 $("#response2").text("Successfully created account");
                                 setTimeout(function(){
                                     window.location.href = "index.html";
-                                }, 3000);
+                                }, 2000);
                             }
                             else
                             {
+                                $("#response").empty();
                                 $("#response").append($("<p><strong>Error:</strong></p><ul><li>" + response.message + "</li></ul>"));
                             }
                         },
@@ -100,6 +101,7 @@
                     });
                 }
                 else {
+                    $("#response").empty();
                     $("#response").append($("<p><strong>Error:</strong></p><ul>" + response_elem + "</ul>"));
                 }
             });

@@ -54,10 +54,12 @@
                             $("#response2").text("Successfully logged in");    
                             setTimeout(function(){
                                 window.location.href = "index.html";
-                            }, 3000);
+                            }, 2000);
                         }
                         else {
+                            $("#response").empty();
                             $("#response").append($("<p><strong>Error:</strong></p><ul><li>" + response.message + "</li></ul>"));
+                            $("#password").val("");
                         }
                     },
                     error: function (xhr, status, error) {
