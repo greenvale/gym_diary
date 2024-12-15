@@ -1,27 +1,33 @@
 
-body 
-{
+body {
     font-family: Arial, Helvetica, sans-serif;
     padding:0px;
     margin:0px;
 }
 
-.hidden
-{
+.hidden {
     display:none;
 }
 
-#navbar
-{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Navbar */
+#navbar {
     background-color: #333;
     padding:10px;
 }
+@media screen and (max-width: 768px) {
+    #navbar {
+        display:block;
+    }
+}
+@media screen and (min-width: 769px) {
+    #navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
 
-#navbar .title
-{
+#navbar .title {
     color: white;
     padding: 5px 10px;
     font-size:24px;
@@ -29,69 +35,98 @@ body
     margin-right:20px;
 }
 
-#navbar a 
-{
+#navbar a {
     color: white;
     padding: 14px 20px;
     text-decoration: none;
     text-align: center;
     display: inline-block;
 }
-
-#navbar a:hover 
-{
+#navbar a:hover {
     background-color: #ddd;
     color: black;
 }
 
-#navbar_left 
-{
+#navbar_left {
     display: flex;
     align-items: center;
 }
-
-#navbar_right
-{
+#navbar_right {
     display: flex;
 }
-
-#navbar_right span
-{
+#navbar_right span {
     padding: 14px 20px;
     color: white;
 }
 
-form
-{
-    width:100%;
-    max-width:400px;
-    margin:20px auto;
+/* Login/register form */
+.form-container {
     padding:20px;
 }
+@media screen and (min-width:769px) {
+    .form-container {
+        width:400px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
+@media screen and (max-width:768px) {
+    .form-container {
+        margin-left:10%;
+        margin-right:10%;
+    }
+}
 
-form h1
-{
+.form h1 {
     text-align:center;
 }
 
-form label
-{
+.form label {
     display:block;
     margin-bottom:5px;
 }
 
-form input[type="text"], form input[type="password"]
-{
+.form input[type="text"], form input[type="password"] {
     width:100%;
     padding:10px;
     margin-bottom:15px;
 }
 
-form button
-{
-    padding:5px;
-    margin-bottom:15px;
+.error-feedback {
+    color:red;
+    padding:20px;
+    font-size:16px;
 }
 
 
-
+/* Buttons */
+button {
+    margin:3px;
+    color: white;
+    border: none;
+    background-color: #555550;
+    border-radius: 5px;
+    padding:4px 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #444433;
+}
+button.green {
+    background-color: #4CAF50;
+}
+button.green:hover {
+    background-color: #45a049;
+}
+button.red {
+    background-color: #c90303;
+}
+button.red:hover {
+    background-color: #a70000;
+}
+button.large {
+    padding:6px 12px;
+    margin:10px;
+}

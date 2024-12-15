@@ -10,36 +10,88 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        function validatePassword(password) {
+            const hasUpperCase = /[A-Z]/;
+            const hasLowerCase = /[a-z]/;
+            const hasTwoNumbers = /\d.*\d/;
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (!hasUpperCase.test(password)) {
+                return false;
+            }
+            if (!hasLowerCase.test(password)) {
+                return false;
+            }
+            if (!hasTwoNumbers.test(password)) {
+                return false;
+            }
+            if (!hasSpecialChar.test(password)) {
+                return false;
+            }
+            return true;
+        }
+
+        function capFirstLetter(string) {
+            if (!string) return "";
+            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
+        
         $(document).ready(function()
         {
-            $("#register_form").on("submit", function (e) {
+            $("#register-form").on("submit", function (e) {
                 e.preventDefault();
 
-                if ($("#register_password").val() != $("#register_confirm_password").val())
-                {
-                    $("#register_response").text("Passwords don't match");
+                let pword = $("#password").val();
+                let confirm_pword = $("#confirm_password").val();
+                let firstname = capFirstLetter($("#firstname").val());
+                let surname = capFirstLetter($("#surname").val());
+                let username = $("#username").val();
+
+                let response_elem = "";
+
+                if (username.includes(" ")) {
+                    response_elem = response_elem + "<li>Username shouldn't contain space</li>";
                 }
-                else
-                {
+                if (firstname.includes(" ")) {
+                    response_elem = response_elem + "<li>First name shouldn't contain space</li>";
+                }
+                if (surname.includes(" ")) {
+                    response_elem = response_elem + "<li>Surname shouldn't contain space</li>";
+                }
+                if (pword != confirm_pword) {
+                    response_elem = response_elem + "<li>Passwords must match</li>";
+                }
+                if (pword.length < 8) {
+                    response_elem = response_elem + "<li>Password should be at least 8 characters</li>"
+                }
+                if (!validatePassword(pword)) {
+                    response_elem = response_elem + "<li>Password must have upper and lower case letters, two numbers and a special character</li>";
+                }
+
+                if (response_elem == "") {
+                    // no issues with the form data
                     $.ajax({
                         url: "./user.php",
                         type: "POST",
                         data: {
                             action: "register",
-                            username: $("#username").val(),
-                            password: $("#password").val()
+                            firstname: firstname,
+                            surname: surname,
+                            username: username,
+                            password: pword
                         },
                         success: function (response) {
                             if (response.success == true)
                             {
-                                $("#response").text("Successfully created account");
+                                $("#register-form").addClass("hidden");
+                                $("#response2").text("Successfully created account");
                                 setTimeout(function(){
                                     window.location.href = "index.html";
                                 }, 3000);
                             }
                             else
                             {
-                                $("#response").text(response.message);
+                                $("#response").append($("<p><strong>Error:</strong></p><ul><li>" + response.message + "</li></ul>"));
                             }
                         },
                         error: function (xhr, status, error) {
@@ -47,22 +99,54 @@
                         }
                     });
                 }
+                else {
+                    $("#response").append($("<p><strong>Error:</strong></p><ul>" + response_elem + "</ul>"));
+                }
             });
         });
     </script>
 
-    <div><a href="index.html">Return to home</a></div>
-    <form id="register_form" class="form">
-        <h1>Register</h1>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <label for="confirm_password">Confirm password:</label>
-        <input type="password" id="confirm_password" name="confirm_password" required>
-        <button type="submit">Create account</button>
-        <div id="response" style="padding:20px;font-size:20px;"></div>
-    </form>
+    <div id="navbar">
+        <div id="navbar_left">
+            <div class="title">Gym Diary</div>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>  
+        </div>
+        <div id="navbar_right">
+        </div>
+    </div>
+
+    <div class="form-container">
+        <form id="register-form" class="form">
+            <h1>Register</h1>
+            
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" autocapitalize="none" required>
+            
+            <label for="firstname">First name:</label>
+            <input type="text" id="firstname" name="firstname" required>
+
+            <label for="surname">Surname:</label>
+            <input type="text" id="surname" name="surname" required>
+            
+            <!--<label for="dob">Date of birth:</label>
+            <input type="date" id="dob" name="dob" required>-->
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <label for="confirm_password">Confirm password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+            
+            <button type="submit" class="large">Create account</button>
+            
+            <div id="response" class="error-feedback"></div>
+            
+            <div>Already have an account? <a href="login.html">Log in here</a></div>
+        </form>
+        <h2 style="text-align:center;" id="response2"></h2>
+    </div>
+        
 
 </body>
 </html>

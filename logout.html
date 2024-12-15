@@ -10,7 +10,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-
         $(document).ready(function()
         {
             $.ajax({
@@ -23,17 +22,25 @@
                     $("#response").text(response.message);
                     setTimeout(function(){
                         window.location.href = "index.html";
-                    }, 2000);
+                    }, 3000);
                 },
                 error: function (xhr, status, error) {
                     console.log("An error occurred: " + xhr.responseText);
                 }
             });
         });
-
     </script>
 
-    <div><a href="index.html">Return to home</a></div>
+    <div id="navbar">
+        <div id="navbar_left">
+            <div class="title">Gym Diary</div>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>  
+        </div>
+        <div id="navbar_right">
+        </div>
+    </div>
+
     <h2 style="text-align:center;" id="response"></h2>
 
 </body>

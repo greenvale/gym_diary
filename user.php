@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         if (isset($_SESSION["user_id"]))
         {
-            echo json_encode(["status" => "fail", "message" => "Already logged in"]);
+            echo json_encode(["success" => false, "message" => "Already logged in"]);
             http_response_code(200);
         }
         else
@@ -53,17 +53,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             if ($login_success)
             {
                 $_SESSION["user_id"] = $row["id"];
-                echo json_encode(["status" => "success", "message" => "Login successful"]);
+                echo json_encode(["success" => true, "message" => "Login successful"]);
                 http_response_code(200);
             }
             else
             {
-                echo json_encode(["status" => "fail", "message" => "Invalid username or incorrect password"]);
+                echo json_encode(["success" => false, "message" => "Invalid username or incorrect password"]);
                 http_response_code(200);
             }
         }
     }
-    elseif ($action == "register" && isset($_POST["username"]) && isset($_POST["password"]))
+    elseif ($action == "register" && isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["firstname"]) && 
+        isset($_POST["surname"]))
     {
         $stmt = $pdo->prepare("SELECT COUNT(*) AS num_rows FROM users WHERE username = ?");
         $stmt->execute([$_POST["username"]]);
@@ -76,8 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         else
         {
             $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-            $stmt->execute([$_POST["username"], $hashed_password]);
+            $stmt = $pdo->prepare("INSERT INTO users (username, password, firstname, surname) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$_POST["username"], $hashed_password, $_POST["firstname"], $_POST["surname"]]);
             echo json_encode(["success" => True]);
         }
     }

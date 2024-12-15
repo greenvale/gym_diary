@@ -1,3 +1,4 @@
+
 let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 let equipment = ["Dumbbell", "Barbell", "Machine", "Cable"];
@@ -26,9 +27,9 @@ function create_editting_set_row(exercise_card, set_id, weight, reps)
     let set_row = $(`
         <tr class="set-${set_id}">
             <td class="idx"></td>
-            <td><input class="weight" value="${weight}"></input></td>
-            <td><input class="reps" value="${reps}"></input></td>
-            <td class="no-border"><button class="del red">Delete</button></td>
+            <td><input type="text" class="weight" value="${weight}" inputmode="numeric"</input></td>
+            <td><input type="text" class="reps" value="${reps}" inputmode="numeric"></input></td>
+            <td class="no-border"><button class="del red">X</button></td>
         </tr>`);
 
     // add event for delete row button
@@ -203,6 +204,7 @@ class ExerciseCard
         if (this.editting)
         // EDITTING
         {
+            //<input id="ex-${this.id}-ex-details" class="details" value="${this.data["details"]}"></input>
             let card = $(`
                 <div class="ex-header-edit">
                     <div class="error-feedback"></div>
@@ -222,7 +224,7 @@ class ExerciseCard
                 
                 <div class="label-input-pair">
                     <label for="ex-${this.id}-ex-details">Details</label>
-                    <input id="ex-${this.id}-ex-details" class="details" value="${this.data["details"]}"></input>
+                    <textarea id="ex-${this.id}-ex-details" class="details"></textarea>
                 </div>
 
                 <div class="set-table-container">
@@ -243,6 +245,9 @@ class ExerciseCard
             
             $(`#ex-${this.id}`).empty();
             $(`#ex-${this.id}`).append(card);
+
+            // set the details textarea to the details
+            $(`#ex-${this.id} textarea.details`).val(this.data["details"]);
 
             // add the equipment options to the dropdown menu
             $.each(equipment, (i,v) => {
@@ -270,8 +275,8 @@ class ExerciseCard
 
             // add event for new set button
             $(`#ex-${this.id} button.new-set`).click(() => {
-                let init_weight = 0;
-                let init_reps = 0;
+                let init_weight = "";
+                let init_reps = "";
                 
                 // calculate the id for the new set. This will be the largest existing id + 1. If this is first set then idx is 1.
                 let set_id = Object.keys(this.data["sets"]).length == 0 ? 1 : Math.max(...$.map(Object.keys(this.data["sets"]), Number)) + 1;
@@ -300,10 +305,11 @@ class ExerciseCard
 
                 let new_name = $(`#ex-${this.id} input.name`).val();
                 let new_config = $(`#ex-${this.id} select.equip-dropdown`).val();
-                let new_details =  $(`#ex-${this.id} input.details`).val();
+                let new_details =  $(`#ex-${this.id} textarea.details`).val();
 
                 if (new_name == "")
                 {
+                    // ensure that the exercise has a name
                     $(`#ex-${this.id} .error-feedback`).text("Must provide a name for the exercise");
                 }
                 else
@@ -314,8 +320,18 @@ class ExerciseCard
                     this.data["details"] = new_details;
                     
                     $.each(this.data["sets"], (set_id,v) => {
-                        this.data["sets"][set_id]["weight"] = $(`#ex-${this.id} table.set-data tr.set-${set_id} input.weight`).val();
-                        this.data["sets"][set_id]["reps"] = $(`#ex-${this.id} table.set-data tr.set-${set_id} input.reps`).val();  
+                        // clean through the data to make sure it's integers
+                        let weight_val = $(`#ex-${this.id} table.set-data tr.set-${set_id} input.weight`).val();
+                        let reps_val = $(`#ex-${this.id} table.set-data tr.set-${set_id} input.reps`).val();
+
+                        let weight_val_clean = parseInt(weight_val);
+                        let reps_val_clean = parseInt(reps_val);
+
+                        weight_val_clean = isNaN(weight_val_clean) ? 0 : weight_val_clean;
+                        reps_val_clean = isNaN(reps_val_clean) ? 0 : reps_val_clean;
+
+                        this.data["sets"][set_id]["weight"] = weight_val_clean.toString();
+                        this.data["sets"][set_id]["reps"] = reps_val_clean.toString();  
                     });
 
                     // sync the exercise card data with the server data
@@ -341,7 +357,7 @@ class ExerciseCard
                 </div>
                 <div class="ex-details-view">
                     <div class="detail-elem">${this.data["config"]}</div>
-                    <div class="detail-elem">${this.data["details"]}</div>
+                    ${this.data["details"]=="" ? "" : `<div class="detail-elem">${this.data["details"]}</div>`}
                 </div>
                 
                 <div class="set-table-container">

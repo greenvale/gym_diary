@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +12,7 @@
     <script>
         $(document).ready(function()
         {
+            // check whether the user is already logged in or not
             $.ajax({
                 url: "./user.php",
                 type: "POST",
@@ -22,12 +23,12 @@
                     if (response.logged_in == true)
                     {
                         console.log("id: " + response.user_id + ", username: " + response.username);
-                        $("#logged_in").show();
+                        $("#logged-in").removeClass("hidden");
                     }
                     else
                     {
                         console.log("Not logged in");
-                        $("#logged_out").show();
+                        $("#logged-out").removeClass("hidden");
                     }
                 },
                 error: function (xhr, status, error) {
@@ -35,7 +36,8 @@
                 }
             });
 
-            $("#login_form").on("submit", function (e) {
+            $("#login-form").on("submit", function (e) {
+                // prevent the normal form action
                 e.preventDefault();
 
                 $.ajax({
@@ -43,14 +45,20 @@
                     type: "POST",
                     data: {
                         action: "login",
-                        username: $("#login_username").val(),
-                        password: $("#login_password").val()
+                        username: $("#username").val(),
+                        password: $("#password").val()
                     },
                     success: function (response) {
-                        //$("#login_response").text(response.message);
-                        setTimeout(function(){
-                            window.location.href = "index.html";
-                        }, 100);
+                        if (response.success == true) {
+                            $("#login-form").addClass("hidden");
+                            $("#response2").text("Successfully logged in");    
+                            setTimeout(function(){
+                                window.location.href = "index.html";
+                            }, 3000);
+                        }
+                        else {
+                            $("#response").append($("<p><strong>Error:</strong></p><ul><li>" + response.message + "</li></ul>"));
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.log("An error occurred: " + xhr.responseText);
@@ -60,21 +68,36 @@
         });
     </script>
 
-    <div><a href="index.html">Return to home</a></div>
-    <div id="logged_in" style="display:none;">
+    <div id="navbar">
+        <div id="navbar_left">
+            <div class="title">Gym Diary</div>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>  
+        </div>
+        <div id="navbar_right">
+        </div>
+    </div>
+    
+    <div id="logged-in" class="hidden">
         <h2 style="text-align:center;">Already logged in</h2>
     </div>
-    <div id="logged_out" style="display:none;">
-        <form id="login_form" class="form">
-            <h1>Login</h1>
-            <label for="login_username">Username:</label>
-            <input type="text" id="login_username" name="username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="login_password" name="password" required>
-            <button type="submit">Login</button>
-            <div id="login_response" style="padding:20px;font-size:20px;color:red;"></div>
-            <div>Haven't got an account? <a href="register.html">Create one here</a></div>
-        </form>
+    <div id="logged-out" class="hidden">
+        <div class="form-container">
+            <form id="login-form" class="form">
+                <h1>Login</h1>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" autocapitalize="none" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <br>
+                <button class="large" type="submit">Login</button>
+                <div id="response" class="error-feedback"></div>
+                <div>Haven't got an account? <a href="register.html">Create one here</a></div>
+            </form>
+            <h2 style="text-align:center;" id="response2"></h2>
+        </div>
     </div>
 
 </body>

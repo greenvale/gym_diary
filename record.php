@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         
         $ex_id = $pdo->lastInsertId();
 
-        // return the index for this new exercise
+        // return the index for this new exercise to produce exercise card
         echo json_encode(["success" => True, "ex_id" => $ex_id]);
         http_response_code(200);
     }
