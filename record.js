@@ -363,7 +363,7 @@ class ExerciseCard
                 <div class="set-table-container">
                     <table class="set-data">
                         <thead>
-                            <th>#</th>
+                            <th>Set</th>
                             <th>Weight</th>
                             <th>Reps</th>
                         </thead>
